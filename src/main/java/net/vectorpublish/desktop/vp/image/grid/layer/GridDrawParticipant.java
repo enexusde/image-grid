@@ -1,32 +1,33 @@
-package net.vectorpublish.desktop.vp.image.participant;
+package net.vectorpublish.desktop.vp.image.grid.layer;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
 import java.util.Enumeration;
 
 import net.vectorpublish.desktop.vp.api.DrawParticipant;
 import net.vectorpublish.desktop.vp.api.ui.MouseParticipant;
 import net.vectorpublish.desktop.vp.api.vpd.VectorPublishNode;
-import net.vectorpublish.desktop.vp.buttons.move.MovableAxis;
 import net.vectorpublish.desktop.vp.image.layer.ImageLayer;
+import net.vectorpublish.desktop.vp.image.participant.ImageDrawParticipant;
 import net.vectorpublish.desktop.vp.pd.official.RelativeKeyframeRecalculator;
 import net.vectorpublish.desktop.vp.pd.official.TechnicalMouseDrag;
 import net.vectorpublish.desktop.vp.pd.official.VectorPublishGraphics;
 
-public class ImageDrawParticipant implements DrawParticipant, MovableAxis {
+public class GridDrawParticipant implements DrawParticipant {
 
-	private final ImageLayer layer;
-	private int y, x;
-	private BufferedImage image;
-	private final Dimension dim;
+	private int x;
+	private int y;
+	private int w;
+	private int h;
+	private final GridLayer layer;
 
-	public ImageDrawParticipant(BufferedImage image, ImageLayer layer) {
-		this.image = image;
-		this.dim = new Dimension(image.getWidth(), image.getHeight());
+	public GridDrawParticipant(int x, int y, int w, int h, GridLayer layer) {
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = h;
 		this.layer = layer;
-		this.x = 0;
-		this.y = 0;
 	}
 
 	public Cursor updateMouse(int markerX, int markerY, float docRelX, float docRelY, RelativeKeyframeRecalculator rel,
@@ -35,7 +36,9 @@ public class ImageDrawParticipant implements DrawParticipant, MovableAxis {
 	}
 
 	public Dimension getDimensions() {
-		return dim;
+		ImageLayer parent = layer.getParent();
+		ImageDrawParticipant participant = parent.getParticipant();
+		return participant.getDimensions();
 	}
 
 	public boolean opacity() {
@@ -43,7 +46,6 @@ public class ImageDrawParticipant implements DrawParticipant, MovableAxis {
 	}
 
 	public void paint(VectorPublishGraphics graphics, int documentWidth, int documentHeight) {
-		graphics.drawImage(image, x, y, null);
 		Enumeration<VectorPublishNode> children = layer.children();
 		while (children.hasMoreElements()) {
 			VectorPublishNode vectorPublishNode = (VectorPublishNode) children.nextElement();
@@ -53,29 +55,28 @@ public class ImageDrawParticipant implements DrawParticipant, MovableAxis {
 				drawParticipant.paint(graphics, documentWidth, documentHeight);
 			}
 		}
-
 	}
 
 	public void paintOutside(VectorPublishGraphics graphics, RelativeKeyframeRecalculator relativeRecalculator,
 			int documentWidth, int documentHeight) {
-		Enumeration<VectorPublishNode> children = layer.children();
-		while (children.hasMoreElements()) {
-			VectorPublishNode vectorPublishNode = (VectorPublishNode) children.nextElement();
-			MouseParticipant participant = vectorPublishNode.getParticipant();
-			if (participant instanceof DrawParticipant) {
-				DrawParticipant drawParticipant = (DrawParticipant) participant;
-				drawParticipant.paintOutside(graphics, relativeRecalculator, documentWidth, documentHeight);
+		Dimension dimensions = getDimensions();
+		int countHorizontal = getDimensions().width / w + 1;
+		int countVertical = getDimensions().height / h + 1;
+		for (int blockX = 0; blockX < countHorizontal; blockX++) {
+			for (int blockY = 0; blockY < countVertical; blockY++) {
+				int techX = relativeRecalculator.calcTechnicalX(blockX * w + x);
+				int techY = relativeRecalculator.calcTechnicalY(blockY * h + y);
+				drawCross(graphics, techX, techY);
 			}
 		}
 
 	}
 
-	public void moveHor(int x) {
-		this.x += x;
-	}
-
-	public void moveVert(int y) {
-		this.y += y;
+	private void drawCross(VectorPublishGraphics graphics, int techX, int techY) {
+		graphics.setColor(Color.WHITE);
+		int space = 10;
+		graphics.drawLine(techX - space, techY, techX + space, techY);
+		graphics.drawLine(techX, techY - space, techX, techY + space);
 	}
 
 }
