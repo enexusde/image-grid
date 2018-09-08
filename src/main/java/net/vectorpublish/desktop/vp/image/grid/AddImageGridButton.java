@@ -30,7 +30,6 @@ public class AddImageGridButton extends VPAbstractAction implements LayerSelecti
 
 	public AddImageGridButton() {
 		super(Texts.ADD_GRID, Texts.ADD_GRID_TOOL_TIP, true);
-		System.out.println("HM?");
 	}
 
 	private ImageLayer targetImageLayer = null;
@@ -40,8 +39,10 @@ public class AddImageGridButton extends VPAbstractAction implements LayerSelecti
 
 	@Autowired
 	public final ToolBar tb = null;
+
 	@Autowired
 	public final History history = null;
+
 	@Autowired
 	public final Dialog dlg = null;
 

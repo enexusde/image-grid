@@ -1,8 +1,11 @@
 package net.vectorpublish.desktop.vp.image.grid.layer;
 
+import java.util.Map;
+
 import net.vectorpublish.desktop.vp.api.ui.MouseParticipant;
 import net.vectorpublish.desktop.vp.api.vpd.ModificationContext;
 import net.vectorpublish.desktop.vp.api.vpd.ModificationContext.LayerNodeImpl;
+import net.vectorpublish.desktop.vp.image.Rect;
 import net.vectorpublish.desktop.vp.image.layer.ImageLayer;
 
 public class GridLayer extends LayerNodeImpl {
@@ -26,5 +29,9 @@ public class GridLayer extends LayerNodeImpl {
 	@Override
 	public ImageLayer getParent() {
 		return (ImageLayer) super.getParent();
+	}
+
+	public Map<Short, Rect> getPieces() {
+		return drawGrid.getPieces();
 	}
 }
