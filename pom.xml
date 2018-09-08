@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.e-nexus</groupId>
+	<artifactId>load-image</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+		<exec.mainClass>net.vectorpublish.desktop.vp.Startup</exec.mainClass>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>net.vectorpublish</groupId>
+			<artifactId>Start</artifactId>
+			<version>0.9.26</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<defaultGoal>clean compile exec:java</defaultGoal>
+	</build>
+</project>
